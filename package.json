@@ -1,0 +1,43 @@
+{
+  "name": "fb-api",
+  "version": "1.0.2",
+  "description": "A simple API environment for easy creation of APIs",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "prestart": "node swagger.js",
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "predev": "node swagger.js"
+  },
+  "bin": "setup.js",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "fb-modules": "^1.0.8",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^1.4.5-lts.1",
+    "mysql2": "^3.12.0",
+    "pg": "^8.16.0",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.37.7",
+    "swagger-autogen": "^2.23.7",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "imports": {
+    "#root/*": "./*",
+    "#src/*": "./src/*",
+    "#config/*": "./src/config/*",
+    "#modules/*": "./src/modules/*",
+    "#database/*": "./src/database/*",
+    "#middlewares/*": "./src/middlewares/*",
+    "#routes/*": "./src/routes/*",
+    "#utils/*": "./src/utils/*"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
