@@ -14,12 +14,12 @@ import authMiddleware from "#middlewares/authMiddleware.js";
 export async function useRoute(routes, router) {
   for (const route of routes) {
     try {
-      const { name, is_protected } = route;
+      const { name, path, is_protected } = route;
       let importName = name.toLowerCase() + "Router";
       console.log(`[useRoute] Procesando módulo: ${name}, Protegido: ${is_protected}`);
       // Importa dinámicamente el módulo de la ruta
       const module = await import(`#modules/${name}/Router.js`);
-      const routePath = `/`;
+      const routePath = `/${path}`;
       const routeHandler = module[importName];
 
       if (!routeHandler) {

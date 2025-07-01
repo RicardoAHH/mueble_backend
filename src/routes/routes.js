@@ -1,7 +1,7 @@
 export const routes = [
-  { name: "Auth", is_protected: false },
-  { name: "Users", is_protected: true },
-  { name: "Products", is_protected: true },
-  { name: "Categories", is_protected: false },
-  { name: "Roles", is_protected: true },
+  { name: "Auth", path: "auth", is_protected: false },
+  { name: "Users", path: "users", is_protected: true },
+  { name: "Products", path: "products", is_protected: false },
+  { name: "Categories", path: "categories", is_protected: false },
+  { name: "Roles", path: "roles", is_protected: true },
 ];

@@ -23,11 +23,11 @@ import { index, show, store, update, destroy, profile, restore, changePassword }
 
 export const usersRouter = Router();
 
-usersRouter.get("/users/", index);
-usersRouter.get("/users/profile", profile); 
-usersRouter.patch("/users/change-password", changePassword); 
-usersRouter.get("/users/:id", show);
-usersRouter.post("/users/", store);
-usersRouter.put("/users/:id?", update);
-usersRouter.delete("/users/:id", destroy); 
-usersRouter.patch("/users/:id/restore", restore);
+usersRouter.get("/", index);
+usersRouter.get("/profile", profile);
+usersRouter.patch("/change-password", changePassword);
+usersRouter.get("/:id", show);
+usersRouter.post("/", store);
+usersRouter.put("/:id?", update);
+usersRouter.delete("/:id", destroy);
+usersRouter.patch("/:id/restore", restore);
