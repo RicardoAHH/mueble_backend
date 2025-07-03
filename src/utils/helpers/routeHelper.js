@@ -16,7 +16,7 @@ export async function useRoute(routes, router) {
     try {
       const { name, path, is_protected } = route;
       let importName = name.toLowerCase() + "Router";
-      console.log(`[useRoute] Procesando módulo: ${name}, Protegido: ${is_protected}`);
+
       // Importa dinámicamente el módulo de la ruta
       const module = await import(`#modules/${name}/Router.js`);
       const routePath = `/${path}`;
@@ -29,10 +29,10 @@ export async function useRoute(routes, router) {
 
       // Aplica middleware de autenticación si la ruta es protegida
       if (is_protected) {
-        console.log(`[useRoute] Montando router para ${name} en ${routePath} CON authMiddleware.`);
+
         router.use(routePath, authMiddleware, routeHandler);
       } else {
-        console.log(`[useRoute] Montando router para ${name} en ${routePath} SIN authMiddleware.`);
+
         router.use(routePath, routeHandler);
       }
     } catch (error) {
