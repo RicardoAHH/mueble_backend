@@ -163,14 +163,50 @@ const doc = {
                 }
             }
         },
-        // USERS MODULE (EJEMPLO, COMPLETA TUS RUTAS DE USERS)
+        // --- USERS MODULE ---
+        '/users': {
+            get: {
+                summary: 'Obtener todos los usuarios',
+                tags: ['Users'],
+                // security: [{ authorization: [] }], // Descomenta si esta ruta requiere token de auth
+                responses: {
+                    200: {
+                        description: 'Lista de usuarios.',
+                        schema: {
+                            type: 'array',
+                            items: { '$ref': '#/definitions/User' }
+                        }
+                    },
+                    401: { description: 'No autorizado.' }, // Si requiere autenticación
+                    500: { description: 'Error del servidor.' }
+                }
+            },
+            post: { // Rutas de creación de usuario
+                summary: 'Crear un nuevo usuario',
+                tags: ['Users'],
+                parameters: [{
+                    in: 'body',
+                    name: 'body',
+                    required: true,
+                    schema: { '$ref': '#/definitions/UserCreate' }
+                }],
+                responses: {
+                    201: { description: 'Usuario creado exitosamente.' },
+                    400: { description: 'Datos inválidos.' },
+                    409: { description: 'Email ya registrado.' }
+                }
+            }
+        },
         '/users/profile': {
             get: {
                 summary: 'Obtener perfil del usuario autenticado',
                 tags: ['Users'],
                 security: [{ authorization: [] }], // Si esta ruta requiere auth
                 responses: {
-                    200: { description: 'Perfil del usuario.' },
+                    200: {
+                        description: 'Perfil del usuario.',
+                        schema: { '$ref': '#/definitions/User' } // Referencia al esquema de User
+                    },
                     401: { description: 'No autorizado.' }
                 }
             }
@@ -207,24 +243,37 @@ const doc = {
                     in: 'path',
                     name: 'id',
                     required: true,
-                    type: 'string',
+                    type: 'integer', // Asumiendo que el ID es un entero (BIGINT de Sequelize)
+                    format: 'int64',
                     description: 'ID del usuario.'
                 }],
                 responses: {
-                    200: { description: 'Usuario encontrado.' },
+                    200: {
+                        description: 'Usuario encontrado.',
+                        schema: { '$ref': '#/definitions/User' } // Referencia al esquema de User
+                    },
                     404: { description: 'Usuario no encontrado.' }
                 }
             },
             put: {
                 summary: 'Actualizar un usuario por ID',
                 tags: ['Users'],
-                parameters: [{
-                    in: 'path',
-                    name: 'id',
-                    required: true,
-                    type: 'string',
-                    description: 'ID del usuario.'
-                }],
+                parameters: [
+                    {
+                        in: 'path',
+                        name: 'id',
+                        required: true,
+                        type: 'integer', // Asumiendo ID entero
+                        format: 'int64',
+                        description: 'ID del usuario.'
+                    },
+                    {
+                        in: 'body',
+                        name: 'body',
+                        required: true,
+                        schema: { '$ref': '#/definitions/UserUpdate' } // Esquema para la actualización
+                    }
+                ],
                 responses: {
                     200: { description: 'Usuario actualizado.' },
                     400: { description: 'Datos inválidos.' },
@@ -238,7 +287,8 @@ const doc = {
                     in: 'path',
                     name: 'id',
                     required: true,
-                    type: 'string',
+                    type: 'integer', // Asumiendo ID entero
+                    format: 'int64',
                     description: 'ID del usuario.'
                 }],
                 responses: {
@@ -255,7 +305,8 @@ const doc = {
                     in: 'path',
                     name: 'id',
                     required: true,
-                    type: 'string',
+                    type: 'integer', // Asumiendo ID entero
+                    format: 'int64',
                     description: 'ID del usuario a restaurar.'
                 }],
                 responses: {
@@ -579,10 +630,42 @@ const doc = {
         User: {
             type: 'object',
             properties: {
-                id: { type: 'string', format: 'uuid' },
-                name: { type: 'string' },
-                email: { type: 'string', format: 'email' },
+                id: { type: 'integer', format: 'int64', example: 1 },
+                name: { type: 'string', example: 'Juan' },
+                lastname: { type: 'string', example: 'Pérez' },
+                email: { type: 'string', format: 'email', example: 'juan.perez@example.com' },
+                phone: { type: 'string', example: '+525512345678', nullable: true },
+                role: { type: 'string', enum: ['client', 'admin'], default: 'client' }, // Asumiendo roles
+                // Añade campos de timestamps si tu User model los tiene
+                created_at: { type: 'string', format: 'date-time', example: '2025-07-01T10:00:00Z' },
+                updated_at: { type: 'string', format: 'date-time', example: '2025-07-01T10:00:00Z' }
+            },
+            required: ['id', 'name', 'lastname', 'email']
+        },
+        UserCreate: {
+            type: 'object',
+            properties: {
+                name: { type: 'string', example: 'Nuevo' },
+                lastname: { type: 'string', example: 'Usuario' },
+                email: { type: 'string', format: 'email', example: 'nuevo.usuario@example.com' },
+                password: { type: 'string', example: 'securepassword123' },
+                phone: { type: 'string', example: '+525598765432', nullable: true }
+                // Puedes añadir 'role' aquí si el registro permite especificarlo
+            },
+            required: ['name', 'lastname', 'email', 'password']
+        },
+        UserUpdate: {
+            type: 'object',
+            properties: {
+                name: { type: 'string', example: 'Juan Actualizado' },
+                lastname: { type: 'string', example: 'Pérez Actualizado' },
+                email: { type: 'string', format: 'email', example: 'juan.perez.updated@example.com' },
+                phone: { type: 'string', example: '+525511223344', nullable: true },
+                // No incluyas 'password' aquí directamente, usa la ruta 'change-password'
+                // Puedes incluir 'role' si tu actualización de usuario permite cambiarlo
             }
+            // Los campos en un PUT/PATCH suelen ser opcionales, no se usa 'required' aquí
+
         },
         Role: {
             type: 'object',
@@ -608,7 +691,7 @@ const doc = {
                 email: { type: 'string', format: 'email', example: 'juan.perez@example.com' },
                 phone: { type: 'string', example: '+525512345678' },
                 message: { type: 'string', example: 'Me gustaría una cotización para muebles de sala.' },
-                status: { type: 'string', enum: ['pending', 'approved', 'rejected'], example: 'pending' },
+                status: { type: 'string', enum: ['pending', 'approved', 'rejected', 'reviewed'], example: 'pending' },
                 created_at: { type: 'string', format: 'date-time', example: '2025-07-01T10:00:00Z' },
                 updated_at: { type: 'string', format: 'date-time', example: '2025-07-01T10:00:00Z' }
             },
@@ -632,7 +715,7 @@ const doc = {
                 email: { type: 'string', format: 'email', example: 'maria.elena.garcia@example.com' },
                 phone: { type: 'string', example: '+525599887766' },
                 message: { type: 'string', example: 'Cotización actualizada para comedor y buffet.' },
-                status: { type: 'string', enum: ['pending', 'approved', 'rejected'], example: 'approved' }
+                status: { type: 'string', enum: ['pending', 'approved', 'rejected', 'reviewed'], example: 'reviewed' }
             }
             // No se especifica 'required' para el update, ya que todos los campos suelen ser opcionales
         },

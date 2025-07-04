@@ -44,7 +44,7 @@ Quotes.init(
             comment: "Mensaje o descripción de la cotización",
         },
         status: {
-            type: DataTypes.ENUM("pending", "approved", "rejected"),
+            type: DataTypes.ENUM("pending", "approved", "rejected", "reviewed"),
             allowNull: false,
             defaultValue: "pending",
             comment: "Estado de la cotización (pendiente, aprobada, rechazada)",
